@@ -17,14 +17,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import gaur.himanshu.koindependencyinjection.ui.theme.KoinDependencyInjectionTheme
 import gaur.himanshu.koindependencyinjection.view.AuthViewModel
+import gaur.himanshu.koindependencyinjection.view.SessionManager
+import gaur.himanshu.koindependencyinjection.view.SessionModule
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.scope.Scope
+import org.koin.ksp.generated.module
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), AndroidScopeComponent {
+
+    override val scope: Scope by activityScope()
+    private val sessionManager: SessionManager by scope.inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        loadKoinModules(SessionModule().module)
         enableEdgeToEdge()
         setContent {
             KoinDependencyInjectionTheme {
@@ -44,17 +55,17 @@ class MainActivity : ComponentActivity() {
                     }
                     uiState.value.data?.let {
                         Greeting(
-                            name = it,
+                            name = it.plus(sessionManager.session),
                             modifier = Modifier.padding(innerPadding)
                         )
                     }
-
                 }
             }
         }
     }
 
     override fun onDestroy() {
+        unloadKoinModules(SessionModule().module)
         super.onDestroy()
     }
 }
