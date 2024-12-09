@@ -10,8 +10,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
+import org.koin.android.annotation.KoinViewModel
+import org.koin.core.annotation.InjectedParam
 
+@KoinViewModel
 class AuthViewModel(
+    @InjectedParam val user: User,
     private val getUserNameUseCase: GetUserNameUseCase
 ) : ViewModel() {
 

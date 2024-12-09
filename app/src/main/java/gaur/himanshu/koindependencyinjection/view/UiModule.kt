@@ -1,42 +1,41 @@
 package gaur.himanshu.koindependencyinjection.view
 
 import gaur.himanshu.koindependencyinjection.MainActivity
-import org.koin.core.module.dsl.viewModel
-import org.koin.core.qualifier.named
-import org.koin.dsl.module
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Factory
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Scope
+import org.koin.core.annotation.Scoped
 
 data class SessionManager(
     val session: String
 )
 
-data class User(
-    val name: String
-)
+@Module
+@ComponentScan()
+class UiModule {
 
-val UserScope = named("UserScope")
-
-val userModule = module {
-    scope(UserScope) {
-        scoped {
-            User(name = "Gaur")
-        }
+    @Scope(MainActivity::class)
+    @Scoped
+    fun provideSessoinManager(): SessionManager {
+        return SessionManager("this is session")
     }
 
-    factory<String>(
-        named("first")
-    ) { "first" }
-
-    factory<String>(named("second")) { "second" }
-}
-
-val sessionModule = module {
-    scope<MainActivity> {
-        scoped {
-            SessionManager(session = "this is activity")
-        }
+    @Scope(UserScope::class)
+    @Scoped
+    fun provideUser(): User {
+        return User(name = "Himanshu Gaur")
     }
+
+    @Factory
+    fun provideString(): String {
+        return "first string"
+    }
+
+    @Factory
+    fun provideSecondSTring(): String {
+        return "second string"
+    }
+
 }
 
-val uiModule = module {
-    viewModel { AuthViewModel(get()) }
-}

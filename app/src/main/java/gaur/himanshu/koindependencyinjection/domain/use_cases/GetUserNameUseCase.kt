@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 class GetUserNameUseCase(
-    private val authRepository: AuthRepository
+    private val authRepository: Lazy<AuthRepository>
 ) {
 
     operator fun invoke() = flow<String> {
-        emit(authRepository.getUserName())
+        emit(authRepository.value.getUserName())
     }.catch {
         emit("error")
     }.flowOn(Dispatchers.IO)
